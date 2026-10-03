@@ -19,17 +19,28 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
-        'is_suspended'      => 'boolean',
+        'password' => 'hashed',
+        'is_suspended' => 'boolean',
     ];
 
     // ──────────────────────────────────────────────────────────────
     // Role helpers
     // ──────────────────────────────────────────────────────────────
 
-    public function isAdmin(): bool   { return $this->role === 'admin'; }
-    public function isAgent(): bool   { return $this->role === 'agent'; }
-    public function isStudent(): bool { return $this->role === 'student'; }
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isAgent(): bool
+    {
+        return $this->role === 'agent';
+    }
+
+    public function isStudent(): bool
+    {
+        return $this->role === 'student';
+    }
 
     // ──────────────────────────────────────────────────────────────
     // Relationships

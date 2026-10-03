@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { FaHeart, FaMapMarkerAlt, FaBed } from 'react-icons/fa';
 import { BiMap } from 'react-icons/bi';
 
-export default function Dashboard({ auth, favourites }) {
+export default function Dashboard({ auth, favourites, exploreProperties = [] }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -87,6 +87,66 @@ export default function Dashboard({ auth, favourites }) {
                             ))}
                         </div>
                     )}
+
+                    {/* Explore Section */}
+                    <div className="mt-16">
+                        <div className="flex justify-between items-end mb-6">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                                    Explore Boarding Houses
+                                </h2>
+                                <p className="text-gray-500">
+                                    Discover more student accommodations.
+                                </p>
+                            </div>
+                            <Link href={route('listings.explore')} className="hidden md:flex items-center text-orange-600 font-bold hover:text-orange-700">
+                                View all <span className="ml-1 text-lg">→</span>
+                            </Link>
+                        </div>
+
+                        {exploreProperties.length > 0 && (
+                            <div className="relative group">
+                                <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-6 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                                    {exploreProperties.map((property) => (
+                                        <Link key={property.id} href={route('listings.show', property.slug)} className="snap-start shrink-0 w-[42%] md:w-[23%] block group">
+                                            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+                                                <div className="h-40 w-full bg-cover bg-center bg-gray-200 relative"
+                                                    style={{ backgroundImage: `url(${property.cover_photo?.url || '/assets/home.png'})` }}>
+                                                    <span className="absolute top-3 left-3 bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase shadow-sm">
+                                                        {property.type}
+                                                    </span>
+                                                </div>
+                                                
+                                                <div className="p-4 flex-1 flex flex-col">
+                                                    <h3 className="text-gray-900 font-bold text-base mb-1 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors">
+                                                        {property.name}
+                                                    </h3>
+                                                    
+                                                    <div className="space-y-2 mt-auto">
+                                                        <div className="flex items-center text-gray-500 text-xs">
+                                                            <BiMap className="mr-1 text-gray-400" />
+                                                            <span className="truncate">{property.city}</span>
+                                                        </div>
+                                                        
+                                                        <div className="pt-3 mt-2 border-t border-gray-100">
+                                                            <div className="text-orange-600 font-black text-sm">
+                                                                K{Number(property.price_from).toLocaleString()}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        <div className="mt-4 text-center md:hidden">
+                            <Link href={route('listings.explore')} className="inline-flex items-center text-orange-600 font-bold hover:text-orange-700 bg-orange-50 px-6 py-3 rounded-xl w-full justify-center">
+                                View all <span className="ml-2 text-lg">→</span>
+                            </Link>
+                        </div>
+                    </div>
 
                 </div>
             </div>

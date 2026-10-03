@@ -13,6 +13,8 @@ export default function ListingShow({ property, isFavourited }) {
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
     const photos = property.photos || [];
 
+    console.log(property)
+
     const handleNextImage = (e) => {
         e.stopPropagation();
         if (selectedImageIndex < photos.length - 1) {
@@ -250,21 +252,35 @@ export default function ListingShow({ property, isFavourited }) {
                                 </div>
                                 
                                 <div className="space-y-3">
-                                    <a 
-                                        href={`https://wa.me/${property.agent?.phone?.replace(/\D/g, '') || ''}?text=Hi, I am interested in your listing: ${property.name}`} 
-                                        target="_blank" 
-                                        rel="noreferrer"
-                                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center"
-                                    >
-                                        <FaWhatsapp className="mr-2 text-xl" /> WhatsApp
-                                    </a>
-                                    
-                                    <a 
-                                        href={`tel:${property.agent?.phone || ''}`} 
-                                        className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center"
-                                    >
-                                        <LucideIcons.Phone className="mr-2 w-5 h-5" /> Call Agent
-                                    </a>
+                                    {(() => {
+                                        let phoneStr = property.agent?.phone?.replace(/\D/g, '') || '';
+                                        if (phoneStr && !phoneStr.startsWith('26')) {
+                                            if (phoneStr.startsWith('0')) {
+                                                phoneStr = '26' + phoneStr.substring(1);
+                                            } else {
+                                                phoneStr = '26' + phoneStr;
+                                            }
+                                        }
+                                        return (
+                                            <>
+                                                <a 
+                                                    href={`https://wa.me/${phoneStr}?text=Hi, I am interested in your listing: ${property.name}`} 
+                                                    target="_blank" 
+                                                    rel="noreferrer"
+                                                    className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center"
+                                                >
+                                                    <FaWhatsapp className="mr-2 text-xl" /> WhatsApp
+                                                </a>
+                                                
+                                                <a 
+                                                    href={`tel:+${phoneStr}`} 
+                                                    className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center"
+                                                >
+                                                    <LucideIcons.Phone className="mr-2 w-5 h-5" /> Call Agent
+                                                </a>
+                                            </>
+                                        );
+                                    })()}
                                 </div>
                             </div>
                         </div>

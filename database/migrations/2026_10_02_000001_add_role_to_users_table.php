@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             // role: admin | agent | student
             $table->enum('role', ['admin', 'agent', 'student'])
-                  ->default('student')
-                  ->after('email');
+                ->default('student')
+                ->after('email');
 
             // Extra profile fields
             $table->string('phone')->nullable()->after('role');

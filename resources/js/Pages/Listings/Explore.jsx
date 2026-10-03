@@ -6,7 +6,7 @@ import { BiMap, BiSearch } from "react-icons/bi";
 import { FaEnvelope, FaPhone, FaLinkedin, FaStar, FaUsers, FaHome } from "react-icons/fa";
 import { FaLocationDot, FaMagnifyingGlass, FaShield } from "react-icons/fa6";
 
-export default function ListingsIndex({ auth, properties, filters, favouriteIds = [], cities = [] }) {
+export default function ListingsIndex({ auth, properties, filters, favouriteIds = [], areas = [], streets = [] }) {
     const [localFilters, setLocalFilters] = useState(filters);
 
     const applyFilters = (e) => {
@@ -74,43 +74,30 @@ export default function ListingsIndex({ auth, properties, filters, favouriteIds 
                     </div>
                 </header>
 
-                {/* Hero Section */}
-                <section className="relative h-[550px] mt-20 text-white flex items-center justify-center">
-                    <div className="absolute inset-0 z-0">
-                        <img src="/assets/students.jpg" className="w-full h-full object-cover" alt="Students" />
-                        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+                <div className="pt-24 pb-8 bg-white border-b border-gray-100">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div>
+                                <h1 className="text-3xl font-bold text-gray-900">Explore Boarding Houses</h1>
+                                <p className="text-gray-500 mt-2">Find your perfect student accommodation</p>
+                            </div>
+                            <form onSubmit={applyFilters} className="flex flex-wrap md:flex-nowrap gap-3 w-full md:w-auto bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                                <select value={localFilters.area || ''} onChange={e => setLocalFilters(f => ({ ...f, area: e.target.value }))} className="flex-1 bg-white border-none text-gray-800 text-sm rounded-xl px-4 py-2.5 justify-between outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+                                    <option value="">All Areas</option>
+                                    {areas.map(a => <option key={a} value={a}>{a}</option>)}
+                                </select>
+                                <select value={localFilters.street || ''} onChange={e => setLocalFilters(f => ({ ...f, street: e.target.value }))} className="flex-1 bg-white border-none text-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+                                    <option value="">All Streets</option>
+                                    {streets.map(s => <option key={s} value={s}>{s}</option>)}
+                                </select>
+                                <input type="number" placeholder="Max Price" value={localFilters.max_price || ''} onChange={e => setLocalFilters(f => ({ ...f, max_price: e.target.value }))} className="flex-1 w-32 bg-white border-none text-gray-800 text-sm rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-orange-500 shadow-sm" />
+                                <button type="submit" className="bg-orange-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-orange-700 transition-colors shadow-sm w-full md:w-auto">
+                                    Filter
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    
-                    <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-10">
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                            Your Campus. Your Crew
-                            <br />
-                            <span className="text-orange-500">Your Crib.</span>
-                        </h1>
-                        <p className="text-lg md:text-2xl mb-8 text-white max-w-3xl mx-auto">
-                            Find verified, affordable boarding houses near your campus.
-                            No scams. No stress. Just your perfect space.
-                        </p>
-                        
-                        {/* Filters integrated into Hero */}
-                        <form onSubmit={applyFilters} className="bg-white p-4 rounded-xl shadow-lg max-w-4xl mx-auto flex flex-col md:flex-row gap-3 mt-8">
-                            <select value={localFilters.type || ''} onChange={e => setLocalFilters(f => ({ ...f, type: e.target.value }))} className="flex-1 bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-3 outline-none focus:border-orange-500">
-                                <option value="">All Types</option>
-                                <option value="HOSTEL">Hostel / Boarding</option>
-                                <option value="APARTMENT">Apartment</option>
-                                <option value="OFFICE">Office</option>
-                            </select>
-                            <select value={localFilters.city || ''} onChange={e => setLocalFilters(f => ({ ...f, city: e.target.value }))} className="flex-1 bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-3 outline-none focus:border-orange-500">
-                                <option value="">All Cities</option>
-                                {cities.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                            <input type="number" placeholder="Max Price (MWK)" value={localFilters.max_price || ''} onChange={e => setLocalFilters(f => ({ ...f, max_price: e.target.value }))} className="flex-1 bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-3 outline-none focus:border-orange-500" />
-                            <button type="submit" className="bg-orange-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-orange-600 transition-colors">
-                                Search
-                            </button>
-                        </form>
-                    </div>
-                </section>
+                </div>
 
                 {/* Properties Section */}
                 <section className="py-20 bg-gray-50" id="properties">
@@ -177,86 +164,7 @@ export default function ListingsIndex({ auth, properties, filters, favouriteIds 
                     </div>
                 </section>
 
-                {/* Features Section */}
-                <section className="py-20 bg-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                                Why Choose ZibaCrib?
-                            </h2>
-                            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                                We've transformed the student accommodation search from stressful to seamless
-                            </p>
-                        </div>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {features.map((feature, index) => (
-                                <div key={index} className="text-center p-6 rounded-xl hover:shadow-lg transition-shadow border border-transparent hover:border-gray-100">
-                                    <div className="flex justify-center mb-4">
-                                        <div className="bg-blue-50 p-4 rounded-full">{feature.icon}</div>
-                                    </div>
-                                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                                    <p className="text-gray-600">{feature.description}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
 
-                {/* How It Works */}
-                <section className="py-20 bg-gray-50">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                                Find Your Home in 3 Steps
-                            </h2>
-                        </div>
-                        <div className="grid md:grid-cols-3 gap-8">
-                            <div className="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <BiSearch className="text-2xl text-blue-600" />
-                                </div>
-                                <h3 className="text-xl font-semibold mb-4">1. Search & Explore</h3>
-                                <p className="text-gray-600">Browse verified properties with filters for location, price, and amenities that matter to you.</p>
-                            </div>
-                            <div className="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <FaHeart className="text-2xl text-green-600" />
-                                </div>
-                                <h3 className="text-xl font-semibold mb-4">2. Choose & Book</h3>
-                                <p className="text-gray-600">Found your perfect space? Get landlord's contact and book immediately.</p>
-                            </div>
-                            <div className="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <FaCheckCircle className="text-2xl text-orange-600" />
-                                </div>
-                                <h3 className="text-xl font-semibold mb-4">3. Move In & Relax</h3>
-                                <p className="text-gray-600">Get confirmed instantly and move into your new home. It's really that simple!</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Story Section */}
-                <section className="py-20 bg-white">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex flex-col lg:flex-row items-center gap-12">
-                            <div className="lg:w-1/2">
-                                <img src="/assets/zibacrib_emily_george.jpg" alt="ZibaCrib Co-Founders" className="rounded-2xl shadow-lg w-full" />
-                            </div>
-                            <div className="lg:w-1/2">
-                                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                                    Born from Student Frustration
-                                </h2>
-                                <div className="space-y-4 text-gray-600 text-lg">
-                                    <p>When I was accepted at CBU in 2023, I was beyond excited to start my journey at the best university in the country. But then came the challenge of finding accommodation.</p>
-                                    <p>The process was exhausting—endless posts in groups, not knowing who to trust, hearing stories of scammers and high agent fees. After weeks of frustration, I finally found a boarding house.</p>
-                                    <p>Fast forward to the year 2025, I still recognize how fractured this system is. Most of my friends still struggle just like I struggled. It was then that I knew change was needed. I, along with my friends, came up with the idea of ZibaCrib, a secure, credible, and hassle-free platform that enables students to easily discover reputable boarding houses quickly.</p>
-                                    <p className="text-sm text-gray-500 font-medium italic mt-4">- Palanga Nkobi, Co-Founder</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
 
                 {/* Footer */}
                 <footer className="bg-gray-900 text-white">

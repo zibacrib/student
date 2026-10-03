@@ -5,6 +5,7 @@ use App\Http\Controllers\Agent\PhotoController;
 use App\Http\Controllers\Agent\PropertyController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Property;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,6 +16,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', [ListingController::class, 'index'])->name('listings.index');
+Route::get('/explore', [ListingController::class, 'explore'])->name('listings.explore');
 Route::get('/listings/{property:slug}', [ListingController::class, 'show'])->name('listings.show');
 Route::post('/listings/{property}/enquire', [ListingController::class, 'enquire'])->name('listings.enquire');
 
@@ -36,10 +38,10 @@ Route::middleware('auth')->group(function () {
 
     // Role-based redirect on /dashboard
     Route::get('/dashboard', function () {
-        return match(auth()->user()->role) {
-            'admin'  => redirect()->route('admin.dashboard'),
-            'agent'  => redirect()->route('agent.properties.index'),
-            default  => redirect()->route('student.dashboard'),
+        return match (auth()->user()->role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'agent' => redirect()->route('agent.properties.index'),
+            default => redirect()->route('student.dashboard'),
         };
     })->name('dashboard');
 
@@ -63,7 +65,17 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
             ->with('coverPhoto')
             ->latest('favourites.created_at')
             ->get();
-        return Inertia::render('Student/Dashboard', ['favourites' => $favourites]);
+
+        $exploreProperties = Property::published()
+            ->with(['coverPhoto'])
+            ->inRandomOrder()
+            ->limit(8)
+            ->get();
+
+        return Inertia::render('Student/Dashboard', [
+            'favourites' => $favourites,
+            'exploreProperties' => $exploreProperties,
+        ]);
     })->name('dashboard');
 });
 

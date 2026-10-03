@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Amenity;
 use App\Models\Enquiry;
 use App\Models\Favourite;
 use App\Models\Property;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -24,11 +22,11 @@ class ListingController extends Controller
             ->withCount('favouritedBy');
 
         // Filters
-        if ($request->filled('type')) {
-            $query->ofType($request->type);
+        if ($request->filled('area')) {
+            $query->where('area', 'like', "%{$request->area}%");
         }
-        if ($request->filled('city')) {
-            $query->inCity($request->city);
+        if ($request->filled('street')) {
+            $query->where('address', 'like', "%{$request->street}%");
         }
         if ($request->filled('min_price')) {
             $query->where('price_from', '>=', $request->min_price);
@@ -44,11 +42,50 @@ class ListingController extends Controller
             ? auth()->user()->favourites()->pluck('property_id')->toArray()
             : [];
 
-        return Inertia::render('Listings/Index', [
-            'properties'   => $properties,
-            'filters'      => $request->only(['type', 'city', 'min_price', 'max_price']),
+        return Inertia::render('Welcome', [
+            'properties' => $properties,
+            'filters' => $request->only(['area', 'street', 'min_price', 'max_price']),
             'favouriteIds' => $favouriteIds,
-            'cities'       => Property::published()->distinct()->pluck('city')->sort()->values(),
+            'areas' => Property::published()->whereNotNull('area')->where('area', '!=', '')->distinct()->pluck('area')->sort()->values(),
+            'streets' => Property::published()->whereNotNull('address')->where('address', '!=', '')->distinct()->pluck('address')->sort()->values(),
+        ]);
+    }
+
+    /**
+     * Full grid search page.
+     */
+    public function explore(Request $request): Response
+    {
+        $query = Property::published()
+            ->with(['coverPhoto', 'amenities'])
+            ->withCount('favouritedBy');
+
+        // Filters
+        if ($request->filled('area')) {
+            $query->where('area', 'like', "%{$request->area}%");
+        }
+        if ($request->filled('street')) {
+            $query->where('address', 'like', "%{$request->street}%");
+        }
+        if ($request->filled('min_price')) {
+            $query->where('price_from', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price_from', '<=', $request->max_price);
+        }
+
+        $properties = $query->latest()->paginate(24)->withQueryString();
+
+        $favouriteIds = auth()->check()
+            ? auth()->user()->favourites()->pluck('property_id')->toArray()
+            : [];
+
+        return Inertia::render('Listings/Explore', [
+            'properties' => $properties,
+            'filters' => $request->only(['area', 'street', 'min_price', 'max_price']),
+            'favouriteIds' => $favouriteIds,
+            'areas' => Property::published()->whereNotNull('area')->where('area', '!=', '')->distinct()->pluck('area')->sort()->values(),
+            'streets' => Property::published()->whereNotNull('address')->where('address', '!=', '')->distinct()->pluck('address')->sort()->values(),
         ]);
     }
 
@@ -67,8 +104,8 @@ class ListingController extends Controller
             && auth()->user()->favourites()->where('property_id', $property->id)->exists();
 
         return Inertia::render('Listings/Show', [
-            'property'    => $property,
-            'isFavourited'=> $isFavourited,
+            'property' => $property,
+            'isFavourited' => $isFavourited,
         ]);
     }
 
@@ -78,15 +115,15 @@ class ListingController extends Controller
     public function enquire(Request $request, Property $property): RedirectResponse
     {
         $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email',
-            'phone'   => 'nullable|string|max:20',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'nullable|string|max:20',
             'message' => 'required|string|max:1000',
         ]);
 
         Enquiry::create(array_merge($validated, [
             'property_id' => $property->id,
-            'user_id'     => auth()->id(), // null if guest
+            'user_id' => auth()->id(), // null if guest
         ]));
 
         return back()->with('success', 'Your enquiry has been sent! The agent will be in touch.');
@@ -105,10 +142,12 @@ class ListingController extends Controller
 
         if ($favourite) {
             $favourite->delete();
+
             return back()->with('success', 'Removed from saved properties');
         }
 
         Favourite::create(['user_id' => $user->id, 'property_id' => $property->id]);
+
         return back()->with('success', 'Property saved!');
     }
 }

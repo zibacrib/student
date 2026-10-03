@@ -10,7 +10,7 @@ class PropertyRoomType extends Model
     protected $fillable = [
         'property_id',
         'type',
-        'price'
+        'price',
     ];
 
     public function property(): BelongsTo

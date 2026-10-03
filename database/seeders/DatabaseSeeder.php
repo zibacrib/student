@@ -15,24 +15,24 @@ class DatabaseSeeder extends Seeder
 
         // Admin account
         User::firstOrCreate(['email' => 'admin@zibacrib.com'], [
-            'name'     => 'ZibaCrib Admin',
+            'name' => 'ZibaCrib Admin',
             'password' => Hash::make('password'),
-            'role'     => 'admin',
+            'role' => 'admin',
         ]);
 
         // Demo agent
         User::firstOrCreate(['email' => 'agent@zibacrib.com'], [
-            'name'        => 'Demo Agent',
-            'password'    => Hash::make('password'),
-            'role'        => 'agent',
+            'name' => 'Demo Agent',
+            'password' => Hash::make('password'),
+            'role' => 'agent',
             'agency_name' => 'Prime Properties',
         ]);
 
         // Demo student
         User::firstOrCreate(['email' => 'student@zibacrib.com'], [
-            'name'     => 'Demo Student',
+            'name' => 'Demo Student',
             'password' => Hash::make('password'),
-            'role'     => 'student',
+            'role' => 'student',
         ]);
     }
 }

@@ -18,11 +18,11 @@ class Property extends Model
     ];
 
     protected $casts = [
-        'price_from'      => 'decimal:2',
-        'latitude'        => 'decimal:7',
-        'longitude'       => 'decimal:7',
-        'is_featured'     => 'boolean',
-        'total_units'     => 'integer',
+        'price_from' => 'decimal:2',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+        'is_featured' => 'boolean',
+        'total_units' => 'integer',
         'available_units' => 'integer',
     ];
 
@@ -34,7 +34,7 @@ class Property extends Model
     {
         static::creating(function (Property $property) {
             if (empty($property->slug)) {
-                $property->slug = Str::slug($property->name) . '-' . Str::random(5);
+                $property->slug = Str::slug($property->name).'-'.Str::random(5);
             }
         });
     }

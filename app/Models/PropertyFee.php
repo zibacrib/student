@@ -9,7 +9,7 @@ class PropertyFee extends Model
     protected $fillable = ['property_id', 'label', 'amount', 'is_included', 'notes'];
 
     protected $casts = [
-        'amount'      => 'decimal:2',
+        'amount' => 'decimal:2',
         'is_included' => 'boolean',
     ];
 

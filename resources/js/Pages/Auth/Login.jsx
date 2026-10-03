@@ -130,8 +130,6 @@ export default function Login({ status, canResetPassword }) {
                     )}
                 </PrimaryButton>
 
-                </PrimaryButton>
-
                 <div className="text-center mt-6">
                     <p className="text-sm text-gray-600">
                         Don't have an account?{' '}

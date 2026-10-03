@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Agent;
 use App\Http\Controllers\Controller;
 use App\Models\Amenity;
 use App\Models\Property;
-use App\Models\PropertyFee;
-use App\Models\PropertyPhoto;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -47,31 +44,31 @@ class PropertyController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'address'       => 'required|string|max:255',
-            'city'          => 'required|string|max:100',
-            'area'          => 'nullable|string|max:100',
-            'latitude'      => 'nullable|numeric',
-            'longitude'     => 'nullable|numeric',
-            'room_types'    => 'required|array|min:1',
-            'room_types.*.type'  => 'required|string|max:100',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'area' => 'nullable|string|max:100',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'room_types' => 'required|array|min:1',
+            'room_types.*.type' => 'required|string|max:100',
             'room_types.*.price' => 'required|numeric|min:0',
-            'amenity_ids'   => 'nullable|array',
+            'amenity_ids' => 'nullable|array',
             'amenity_ids.*' => 'exists:amenities,id',
-            'fees'          => 'nullable|array',
-            'fees.*.label'       => 'required|string',
-            'fees.*.amount'      => 'nullable|numeric',
+            'fees' => 'nullable|array',
+            'fees.*.label' => 'required|string',
+            'fees.*.amount' => 'nullable|numeric',
             'fees.*.is_included' => 'boolean',
-            'fees.*.notes'       => 'nullable|string',
+            'fees.*.notes' => 'nullable|string',
         ]);
 
         $minPrice = collect($validated['room_types'])->min('price') ?? 0;
 
         $property = Property::create(array_merge($validated, [
             'agent_id' => auth()->id(),
-            'status'   => 'DRAFT',
-            'type'     => 'HOSTEL', // Forced type based on user request (boarding house)
+            'status' => 'DRAFT',
+            'type' => 'HOSTEL', // Forced type based on user request (boarding house)
             'price_from' => $minPrice,
         ]));
 
@@ -81,12 +78,12 @@ class PropertyController extends Controller
         }
 
         // Attach amenities
-        if (!empty($validated['amenity_ids'])) {
+        if (! empty($validated['amenity_ids'])) {
             $property->amenities()->sync($validated['amenity_ids']);
         }
 
         // Create fees
-        if (!empty($validated['fees'])) {
+        if (! empty($validated['fees'])) {
             foreach ($validated['fees'] as $fee) {
                 $property->fees()->create($fee);
             }
@@ -104,7 +101,7 @@ class PropertyController extends Controller
         $this->authorizeAgent($property);
 
         return Inertia::render('Agent/Properties/Edit', [
-            'property'  => $property->load(['amenities', 'fees', 'photos', 'roomTypes']),
+            'property' => $property->load(['amenities', 'fees', 'photos', 'roomTypes']),
             'amenities' => Amenity::orderBy('category')->orderBy('name')->get(),
         ]);
     }
@@ -117,27 +114,27 @@ class PropertyController extends Controller
         $this->authorizeAgent($property);
 
         $validated = $request->validate([
-            'name'          => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'address'       => 'required|string|max:255',
-            'city'          => 'required|string|max:100',
-            'area'          => 'nullable|string|max:100',
-            'latitude'      => 'nullable|numeric',
-            'longitude'     => 'nullable|numeric',
-            'room_types'    => 'required|array|min:1',
-            'room_types.*.type'  => 'required|string|max:100',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'area' => 'nullable|string|max:100',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'room_types' => 'required|array|min:1',
+            'room_types.*.type' => 'required|string|max:100',
             'room_types.*.price' => 'required|numeric|min:0',
-            'amenity_ids'   => 'nullable|array',
+            'amenity_ids' => 'nullable|array',
             'amenity_ids.*' => 'exists:amenities,id',
-            'fees'          => 'nullable|array',
-            'fees.*.label'       => 'required|string',
-            'fees.*.amount'      => 'nullable|numeric',
+            'fees' => 'nullable|array',
+            'fees.*.label' => 'required|string',
+            'fees.*.amount' => 'nullable|numeric',
             'fees.*.is_included' => 'boolean',
-            'fees.*.notes'       => 'nullable|string',
+            'fees.*.notes' => 'nullable|string',
         ]);
 
         $minPrice = collect($validated['room_types'])->min('price') ?? 0;
-        
+
         $property->update(array_merge($validated, [
             'price_from' => $minPrice,
         ]));
@@ -157,7 +154,7 @@ class PropertyController extends Controller
 
         // Re-sync fees
         $property->fees()->delete();
-        if (!empty($validated['fees'])) {
+        if (! empty($validated['fees'])) {
             foreach ($validated['fees'] as $fee) {
                 $property->fees()->create($fee);
             }

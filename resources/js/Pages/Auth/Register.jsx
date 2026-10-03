@@ -211,8 +211,6 @@ export default function Register() {
                     )}
                 </PrimaryButton>
 
-                </PrimaryButton>
-
                 <div className="text-center mt-6">
                     <p className="text-sm text-gray-600">
                         Already have an account?{' '}

@@ -33,7 +33,7 @@ class PhotoController extends Controller
         $this->authorizeAgent($property);
 
         $request->validate([
-            'photos'   => 'required|array|min:1',
+            'photos' => 'required|array|min:1',
             'photos.*' => 'image|mimes:jpeg,png,webp|max:5120', // 5MB each
             'property_room_type_id' => 'nullable|exists:property_room_types,id',
         ]);
@@ -46,11 +46,11 @@ class PhotoController extends Controller
             $isFirst = ($property->photos()->count() === 0 && $i === 0);
 
             PropertyPhoto::create([
-                'property_id'           => $property->id,
+                'property_id' => $property->id,
                 'property_room_type_id' => $request->input('property_room_type_id'),
-                'path'                  => $path,
-                'is_cover'              => $isFirst,
-                'sort_order'            => $lastOrder + $i + 1,
+                'path' => $path,
+                'is_cover' => $isFirst,
+                'sort_order' => $lastOrder + $i + 1,
             ]);
         }
 

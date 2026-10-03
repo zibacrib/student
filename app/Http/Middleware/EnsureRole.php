@@ -11,7 +11,7 @@ class EnsureRole
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return redirect('/login');
         }
 
@@ -19,7 +19,7 @@ class EnsureRole
             abort(403, 'Your account has been suspended. Please contact ZibaCrib support.');
         }
 
-        if (!in_array($user->role, $roles)) {
+        if (! in_array($user->role, $roles)) {
             abort(403, 'You do not have permission to access this page.');
         }
 

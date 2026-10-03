@@ -19,13 +19,13 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
-                'total_agents'      => User::where('role', 'agent')->count(),
-                'active_agents'     => User::where('role', 'agent')->where('is_suspended', false)->count(),
-                'suspended_agents'  => User::where('role', 'agent')->where('is_suspended', true)->count(),
-                'total_properties'  => Property::count(),
-                'published'         => Property::where('status', 'PUBLISHED')->count(),
-                'pending_review'    => Property::where('status', 'PENDING_REVIEW')->count(),
-                'total_students'    => User::where('role', 'student')->count(),
+                'total_agents' => User::where('role', 'agent')->count(),
+                'active_agents' => User::where('role', 'agent')->where('is_suspended', false)->count(),
+                'suspended_agents' => User::where('role', 'agent')->where('is_suspended', true)->count(),
+                'total_properties' => Property::count(),
+                'published' => Property::where('status', 'PUBLISHED')->count(),
+                'pending_review' => Property::where('status', 'PENDING_REVIEW')->count(),
+                'total_students' => User::where('role', 'student')->count(),
             ],
         ]);
     }
@@ -52,15 +52,15 @@ class AdminController extends Controller
     public function storeAgent(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users',
-            'password'     => 'required|min:8',
-            'phone'        => 'nullable|string|max:20',
-            'agency_name'  => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+            'phone' => 'nullable|string|max:20',
+            'agency_name' => 'nullable|string|max:255',
         ]);
 
         User::create(array_merge($validated, [
-            'role'     => 'agent',
+            'role' => 'agent',
             'password' => bcrypt($validated['password']),
         ]));
 
@@ -120,7 +120,7 @@ class AdminController extends Controller
         $request->validate(['reason' => 'required|string|max:500']);
 
         $property->update([
-            'status'           => 'REJECTED',
+            'status' => 'REJECTED',
             'rejection_reason' => $request->reason,
         ]);
 
