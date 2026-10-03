@@ -72,10 +72,23 @@ jobs:
         script: |
           cd /var/www/zibacrib/student
           git pull origin main
-          composer install --no-interaction --prefer-dist --optimize-autoloader
+          
+          # Create .env and generate key if they don't exist
+          if [ ! -f .env ]; then
+            cp .env.example .env
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+            php artisan key:generate
+          else
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+          fi
+          
           npm ci --legacy-peer-deps
           npm run build
+          
+          php artisan storage:link
           php artisan migrate --force
+          php artisan db:seed --force
+          
           php artisan optimize:clear
           php artisan config:cache
           php artisan route:cache
